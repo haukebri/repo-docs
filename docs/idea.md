@@ -1,20 +1,19 @@
-# Git-based Collaborative Knowledge Platform
+# Git-based editable Knowledge Platform
 
 ## ✨ Idea
 
-A lightweight web platform that allows both developers and non-developers to collaboratively edit Markdown documents stored in a Git repository. This platform acts as a Git-backed knowledge base, accessible via a clean web interface and enhanced by AI editing support. It enables asynchronous collaboration without requiring Git or code editor knowledge.
+A lightweight web platform that allows both developers and non-developers to edit Markdown documents stored in a Git repository. This platform acts as a Git-backed knowledge base, accessible via a clean web interface and enhanced by AI editing support. It enables asynchronous documenting without requiring Git or code editor knowledge.
 
 Use cases include:
 
 - Documentation and internal wikis
 - AI-assisted writing and refactoring
 - Task lists and planning files
-- VibeCoding-style collaborative workspaces
 
 ## 🎯 Goals
 
 - Make Git content editable through a visual UI
-- Let users collaborate on `.md` files easily
+- Let users work on `.md` files easily
 - Enable AI-powered content suggestions or edits
 - Maintain full Git history and version control
 - Work even outside dev hours, tools, or technical knowledge
