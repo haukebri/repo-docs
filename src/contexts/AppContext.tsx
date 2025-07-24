@@ -16,6 +16,7 @@ const getInitialConfig = (): AppConfig | null => {
       githubToken: import.meta.env.VITE_GITHUB_TOKEN,
       repoUrl: import.meta.env.VITE_GITHUB_REPO_URL,
       openaiApiKey: import.meta.env.VITE_OPENAI_API_KEY,
+      openaiModel: import.meta.env.VITE_OPENAI_MODEL || 'gpt-4-turbo-preview',
     };
   }
   return null;

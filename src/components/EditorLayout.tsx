@@ -1,6 +1,7 @@
 import React from 'react';
 import { FileBrowser } from './FileBrowser';
 import { MarkdownEditor } from './MarkdownEditor';
+import { AIChatPanel } from './AIChatPanel';
 import { useFileLoader } from '../hooks/useFileLoader';
 
 export const EditorLayout: React.FC = () => {
@@ -15,8 +16,7 @@ export const EditorLayout: React.FC = () => {
         <MarkdownEditor onSave={saveFile} />
       </div>
       <div className="ai-panel">
-        <h2>AI Assistant</h2>
-        {/* AI chat will go here */}
+        <AIChatPanel />
       </div>
     </div>
   );

@@ -2,6 +2,7 @@ export interface AppConfig {
   githubToken: string;
   repoUrl: string;
   openaiApiKey: string;
+  openaiModel?: string;
 }
 
 export interface FileNode {

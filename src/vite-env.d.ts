@@ -9,6 +9,7 @@ interface ImportMetaEnv {
   readonly VITE_GITHUB_TOKEN?: string
   readonly VITE_GITHUB_REPO_URL?: string
   readonly VITE_OPENAI_API_KEY?: string
+  readonly VITE_OPENAI_MODEL?: string
 }
 
 interface ImportMeta {

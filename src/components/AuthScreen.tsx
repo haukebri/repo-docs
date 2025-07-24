@@ -8,6 +8,7 @@ export const AuthScreen: React.FC = () => {
     githubToken: '',
     repoUrl: '',
     openaiApiKey: '',
+    openaiModel: 'gpt-4-turbo-preview',
   });
 
   const handleSubmit = (e: React.FormEvent) => {
