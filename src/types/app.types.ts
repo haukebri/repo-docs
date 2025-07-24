@@ -17,6 +17,7 @@ export interface EditorState {
   content: string;
   originalContent: string;
   isDirty: boolean;
+  isLoading?: boolean;
   lastSaved?: Date;
   currentFile?: FileNode;
 }

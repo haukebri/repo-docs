@@ -1,11 +1,11 @@
 import React from 'react';
+import { FileBrowser } from './FileBrowser';
 
 export const EditorLayout: React.FC = () => {
   return (
     <div className="editor-layout">
       <div className="sidebar">
-        <h2>Files</h2>
-        {/* File browser will go here */}
+        <FileBrowser />
       </div>
       <div className="editor-panel">
         <h2>Editor</h2>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useApp } from '../contexts/AppContext';
+import { useApp } from '../hooks/useApp';
 import type { AppConfig } from '../types/app.types';
 
 export const AuthScreen: React.FC = () => {

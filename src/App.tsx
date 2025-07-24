@@ -1,5 +1,6 @@
 import './App.css';
-import { AppProvider, useApp } from './contexts/AppContext';
+import { AppProvider } from './contexts/AppContext';
+import { useApp } from './hooks/useApp';
 import { AuthScreen } from './components/AuthScreen';
 import { EditorLayout } from './components/EditorLayout';
 

@@ -1,18 +1,8 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { useState } from 'react';
 import type { ReactNode } from 'react';
-import type { AppConfig, EditorState, AIChat } from '../types/app.types';
-
-interface AppContextType {
-  config: AppConfig | null;
-  setConfig: (config: AppConfig) => void;
-  editorState: EditorState;
-  setEditorState: (state: EditorState) => void;
-  aiChat: AIChat;
-  setAiChat: (chat: AIChat) => void;
-  isAuthenticated: boolean;
-}
-
-const AppContext = createContext<AppContextType | undefined>(undefined);
+import type { AppConfig, EditorState, AIChat, GitHubRepo } from '../types/app.types';
+import { AppContext } from './AppContextDef';
+import type { FileBrowserState } from './AppContextDef';
 
 export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [config, setConfig] = useState<AppConfig | null>(null);
@@ -25,6 +15,13 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     messages: [],
     isLoading: false,
   });
+  const [fileBrowser, setFileBrowser] = useState<FileBrowserState>({
+    files: [],
+    isLoading: false,
+    error: null,
+    selectedFile: null,
+  });
+  const [currentRepo, setCurrentRepo] = useState<GitHubRepo | null>(null);
 
   const isAuthenticated = Boolean(config?.githubToken && config?.repoUrl);
 
@@ -38,6 +35,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         aiChat,
         setAiChat,
         isAuthenticated,
+        fileBrowser,
+        setFileBrowser,
+        currentRepo,
+        setCurrentRepo,
       }}
     >
       {children}
@@ -45,10 +46,3 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   );
 };
 
-export const useApp = () => {
-  const context = useContext(AppContext);
-  if (!context) {
-    throw new Error('useApp must be used within AppProvider');
-  }
-  return context;
-};
