@@ -231,17 +231,15 @@ const openai = new OpenAI({
 
 **Features**:
 
-- "Ask AI" button in editor
-- Context menu for selected text
+- File browser: 'Add to chat context' function to not only have the currently open file in the context, but multiple files possible
+- Send selected text to ai as extra context (with button on selected text "send to chat")
 - Slash commands support
-- AI suggestions panel
 
 **Commands**:
 
-- `/improve` - Enhance writing
-- `/summarize` - Create summary
-- `/expand` - Add more detail
-- `/fix` - Fix grammar/spelling
+- `/improve` - Enhance writing -- no direct chat response needed. Edits the text directly.
+- `/summarize` - Create summary in chat
+- `/expand` - Add more detail -- no direct chat response needed. Edits the text directly.
 
 ## Phase 5: Deployment
 
