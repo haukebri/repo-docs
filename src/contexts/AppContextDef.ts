@@ -10,16 +10,16 @@ export interface FileBrowserState {
 
 export interface AppContextType {
   config: AppConfig | null;
-  setConfig: (config: AppConfig) => void;
+  setConfig: React.Dispatch<React.SetStateAction<AppConfig | null>>;
   editorState: EditorState;
-  setEditorState: (state: EditorState) => void;
+  setEditorState: React.Dispatch<React.SetStateAction<EditorState>>;
   aiChat: AIChat;
-  setAiChat: (chat: AIChat) => void;
+  setAiChat: React.Dispatch<React.SetStateAction<AIChat>>;
   isAuthenticated: boolean;
   fileBrowser: FileBrowserState;
-  setFileBrowser: (state: FileBrowserState) => void;
+  setFileBrowser: React.Dispatch<React.SetStateAction<FileBrowserState>>;
   currentRepo: GitHubRepo | null;
-  setCurrentRepo: (repo: GitHubRepo | null) => void;
+  setCurrentRepo: React.Dispatch<React.SetStateAction<GitHubRepo | null>>;
 }
 
 export const AppContext = createContext<AppContextType | undefined>(undefined);

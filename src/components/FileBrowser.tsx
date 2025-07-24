@@ -74,7 +74,7 @@ const FileTreeNode: React.FC<FileTreeNodeProps> = ({ node, level, onSelect, sele
 };
 
 export const FileBrowser: React.FC = () => {
-  const { config, fileBrowser, setFileBrowser, currentRepo, setCurrentRepo, setEditorState } = useApp();
+  const { config, fileBrowser, setFileBrowser, currentRepo, setCurrentRepo } = useApp();
   const [githubService, setGithubService] = useState<GitHubService | null>(null);
 
   useEffect(() => {
@@ -93,67 +93,43 @@ export const FileBrowser: React.FC = () => {
   const loadFiles = useCallback(async () => {
     if (!githubService || !currentRepo) return;
 
-    setFileBrowser({
-      ...fileBrowser,
+    setFileBrowser(prev => ({
+      ...prev,
       isLoading: true,
       error: null,
-    });
+    }));
 
     try {
       const files = await githubService.getRepoContents(currentRepo);
-      setFileBrowser({
-        ...fileBrowser,
+      setFileBrowser(prev => ({
+        ...prev,
         files,
         isLoading: false,
         error: null,
-      });
+      }));
     } catch (error) {
-      setFileBrowser({
-        ...fileBrowser,
+      setFileBrowser(prev => ({
+        ...prev,
         files: [],
         isLoading: false,
         error: error instanceof Error ? error.message : 'Failed to load files',
-      });
+      }));
     }
-  }, [githubService, currentRepo, fileBrowser, setFileBrowser]);
+  }, [githubService, currentRepo, setFileBrowser]);
 
   useEffect(() => {
     loadFiles();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [githubService, currentRepo]);
 
-  const handleFileSelect = useCallback(async (node: FileNode) => {
-    if (node.type !== 'file' || !githubService || !currentRepo) return;
+  const handleFileSelect = useCallback((node: FileNode) => {
+    if (node.type !== 'file') return;
 
-    setFileBrowser({
-      ...fileBrowser,
-      selectedFile: node,
-    });
-
-    setEditorState((prev) => ({
+    setFileBrowser(prev => ({
       ...prev,
-      currentFile: node,
-      isLoading: true,
+      selectedFile: node,
     }));
-
-    try {
-      const content = await githubService.getFileContent(currentRepo, node.path);
-      setEditorState((prev) => ({
-        ...prev,
-        content,
-        originalContent: content,
-        isDirty: false,
-        isLoading: false,
-        currentFile: node,
-      }));
-    } catch (error) {
-      console.error('Failed to load file content:', error);
-      setEditorState((prev) => ({
-        ...prev,
-        isLoading: false,
-      }));
-    }
-  }, [githubService, currentRepo, fileBrowser, setFileBrowser, setEditorState]);
+  }, [setFileBrowser]);
 
   const handleRefresh = () => {
     loadFiles();
