@@ -1,11 +1,75 @@
-# React + TypeScript + Vite Documentation Project
+# Project Title: Git-AI Markdown Editor
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Overview
 
-Currently, two official plugins are available:
+The Git-AI Markdown Editor is a web-based platform designed to simplify the process of editing Markdown documents stored in a Git repository. With the integration of Anthropic's Claude AI, users can receive AI-powered writing assistance directly within the editor. This project aims to make documentation and knowledge management more accessible and efficient, particularly for teams that utilize Git for version control.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Getting Started
+
+### Prerequisites
+
+- GitHub Personal Access Token (PAT)
+- Claude API Key
+
+### Setup
+
+1. **Clone the Repository**
+
+```bash
+git clone https://github.com/<your-repo>/git-ai-markdown-editor.git
+cd git-ai-markdown-editor
+```
+
+2. **Configuration**
+
+Edit the `.env` file to include your GitHub PAT and Claude API Key.
+
+3. **Installation**
+
+```bash
+npm install
+```
+
+4. **Run the Application**
+
+```bash
+npm start
+```
+
+The application will be available at `http://localhost:3000`.
+
+## Deployment
+
+The project is containerized using Docker, making it easy to deploy on any platform that supports Docker containers.
+
+### Building the Docker Image
+
+```bash
+docker build -t git-ai-markdown-editor .
+```
+
+### Running the Container
+
+```bash
+docker run -p 3000:3000 git-ai-markdown-editor
+```
+
+Visit `http://localhost:3000` to access the application.
+
+## Contributing
+
+We welcome contributions! Please read our [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on how to contribute to this project.
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
+
+## Features
+
+- **GitHub Integration**: Authenticate and interact with GitHub repositories directly.
+- **Markdown Editing**: Live editing of `.md` files with preview capabilities.
+- **AI Assistance**: Get writing suggestions, summarizations, and more from the Claude AI.
+- **Easy Committing**: Stage, commit, and push changes back to the repository without leaving the browser.
 
 ## Expanding the ESLint configuration
 
