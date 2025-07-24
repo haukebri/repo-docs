@@ -81,7 +81,7 @@
 interface AppConfig {
   githubToken: string;
   repoUrl: string;
-  claudeApiKey: string;
+  openaiApiKey: string;
 }
 
 interface FileNode {
@@ -157,51 +157,40 @@ interface EditorState {
 
 ## Phase 3: GitHub Integration
 
-### Task 7: GitHub API Service Layer
+### Task 7: [NOT NEEDED - ALREADY IMPLEMENTED IN TASKS 5 & 6]
 
-**Objective**: Create reliable GitHub API client
+**Status**: NOT NEEDED
 
-**Endpoints**:
+**Reason**: GitHub API calls were already implemented directly in the File Browser (Task 5) and Editor (Task 6) components. No separate service layer required for MVP.
 
-- `GET /repos/{owner}/{repo}/contents/{path}`
-- `GET /repos/{owner}/{repo}/contents/{path}?ref={branch}`
-- `PUT /repos/{owner}/{repo}/contents/{path}`
+### Task 8: [REMOVED - NOT NEEDED FOR MVP]
 
-**Features**:
-
-- Rate limit handling
-- Error recovery
-- SHA tracking for updates
-- Branch support
-
-### Task 8: CORS Proxy Backend
-
-**Objective**: Handle CORS issues with GitHub API
-
-**Implementation**:
-
-- Express.js minimal server
-- Proxy requests to GitHub
-- Add authentication headers
-- Handle OPTIONS preflight
-
-**Endpoints**:
-
-- `POST /api/github/*` - Proxy to GitHub
-- `POST /api/claude` - Proxy to Claude API
+**Reason**: Both GitHub API and OpenAI SDK support direct browser calls. No CORS proxy required.
 
 ## Phase 4: AI Integration
 
-### Task 9: Claude API Integration
+### Task 9: OpenAI API Integration
 
-**Objective**: Connect to Anthropic's Claude API
+**Objective**: Connect to OpenAI API using browser SDK
 
 **Features**:
 
+- Direct browser integration with OpenAI SDK
 - Streaming responses
 - Context window management
 - Error handling
 - Token usage tracking
+
+**Implementation**:
+
+```javascript
+import OpenAI from 'openai';
+
+const openai = new OpenAI({
+  apiKey: openaiApiKey,
+  dangerouslyAllowBrowser: true
+});
+```
 
 **Chat Interface**:
 

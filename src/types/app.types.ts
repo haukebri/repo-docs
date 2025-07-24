@@ -1,7 +1,7 @@
 export interface AppConfig {
   githubToken: string;
   repoUrl: string;
-  claudeApiKey: string;
+  openaiApiKey: string;
 }
 
 export interface FileNode {

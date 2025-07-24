@@ -7,12 +7,12 @@ export const AuthScreen: React.FC = () => {
   const [formData, setFormData] = useState<AppConfig>({
     githubToken: '',
     repoUrl: '',
-    claudeApiKey: '',
+    openaiApiKey: '',
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (formData.githubToken && formData.repoUrl && formData.claudeApiKey) {
+    if (formData.githubToken && formData.repoUrl && formData.openaiApiKey) {
       setConfig(formData);
     }
   };
@@ -64,24 +64,24 @@ export const AuthScreen: React.FC = () => {
         </div>
 
         <div className="form-group">
-          <label htmlFor="claudeApiKey">Claude API Key</label>
+          <label htmlFor="openaiApiKey">OpenAI API Key</label>
           <input
-            id="claudeApiKey"
+            id="openaiApiKey"
             type="password"
-            value={formData.claudeApiKey}
-            onChange={handleChange('claudeApiKey')}
-            placeholder="sk-ant-api03-xxxxxxxxxxxx"
+            value={formData.openaiApiKey}
+            onChange={handleChange('openaiApiKey')}
+            placeholder="sk-proj-xxxxxxxxxxxx"
             required
           />
           <small>
             <a
-              href="https://console.anthropic.com/account/keys"
+              href="https://platform.openai.com/api-keys"
               target="_blank"
               rel="noopener noreferrer"
             >
               Get your API key
             </a>{' '}
-            from Anthropic
+            from OpenAI
           </small>
         </div>
 

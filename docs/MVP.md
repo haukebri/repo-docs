@@ -97,4 +97,4 @@ Build a **web-based Markdown editor** connected to GitHub, with integrated AI su
 - `Dockerfile` and build instructions
 - `docker-compose.yml` if needed
 - SPA frontend code
-- Optional: tiny backend (Node/Express or similar) for API proxying
+- No backend required for MVP
