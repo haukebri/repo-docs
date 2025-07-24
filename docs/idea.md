@@ -1,6 +1,6 @@
 # Git-based editable Knowledge Platform
 
-## ✨ Idea
+## ✨ my Idea
 
 A lightweight web platform that allows both developers and non-developers to edit Markdown documents stored in a Git repository. This platform acts as a Git-backed knowledge base, accessible via a clean web interface and enhanced by AI editing support. It enables asynchronous documenting without requiring Git or code editor knowledge.
 
