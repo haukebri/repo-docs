@@ -4,8 +4,25 @@ import type { AppConfig, EditorState, AIChat, GitHubRepo } from '../types/app.ty
 import { AppContext } from './AppContextDef';
 import type { FileBrowserState } from './AppContextDef';
 
+// Check for development environment variables
+const getInitialConfig = (): AppConfig | null => {
+  if (
+    import.meta.env.VITE_GITHUB_TOKEN &&
+    import.meta.env.VITE_GITHUB_REPO_URL &&
+    import.meta.env.VITE_OPENAI_API_KEY
+  ) {
+    console.log('Loading credentials from environment variables');
+    return {
+      githubToken: import.meta.env.VITE_GITHUB_TOKEN,
+      repoUrl: import.meta.env.VITE_GITHUB_REPO_URL,
+      openaiApiKey: import.meta.env.VITE_OPENAI_API_KEY,
+    };
+  }
+  return null;
+};
+
 export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [config, setConfig] = useState<AppConfig | null>(null);
+  const [config, setConfig] = useState<AppConfig | null>(getInitialConfig());
   const [editorState, setEditorState] = useState<EditorState>({
     content: '',
     originalContent: '',

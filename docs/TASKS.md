@@ -155,6 +155,30 @@ interface EditorState {
 
 **Library**: @uiw/react-md-editor
 
+### Task 6.5: Development Environment Configuration
+
+**Status**: COMPLETED
+
+**Objective**: Add .env support for development convenience
+
+**Features**:
+
+- Auto-load credentials from environment variables if present
+- Skip authentication screen when env vars are configured
+- Keep manual auth screen as fallback for production use
+
+**Implementation**:
+
+- `.env.example` template with required variables
+- TypeScript definitions in `vite-env.d.ts`
+- Check for env vars in `AppProvider` initialization
+- Variables required:
+  - `VITE_GITHUB_TOKEN`
+  - `VITE_GITHUB_REPO_URL`  
+  - `VITE_OPENAI_API_KEY`
+
+**Security Note**: Only for development use. Keys are exposed in browser.
+
 ## Phase 3: GitHub Integration
 
 ### Task 7: [NOT NEEDED - ALREADY IMPLEMENTED IN TASKS 5 & 6]

@@ -17,5 +17,4 @@ This prevents runtime errors since interfaces don't exist at runtime.
 
 ## Development Notes
 
-- You can access the app at all times under http://localhost:5173/
-- You won't see any files loaded as you don't have the API keys
+- You can access the app at all times under <http://localhost:5173/>
