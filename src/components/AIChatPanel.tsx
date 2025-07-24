@@ -13,7 +13,10 @@ export const AIChatPanel: React.FC = () => {
     clearChat,
     copyToClipboard,
     applyToDocument,
-    hasApiKey
+    hasApiKey,
+    contextFiles,
+    removeFromContext,
+    clearContextFiles
   } = useAIChat();
   const [applySuccess, setApplySuccess] = useState(false);
 
@@ -94,6 +97,37 @@ export const AIChatPanel: React.FC = () => {
           )}
         </div>
       </div>
+
+      {contextFiles.length > 0 && (
+        <div className="ai-context-files">
+          <div className="context-files-header">
+            <span className="context-files-title">Context Files ({contextFiles.length})</span>
+            <button 
+              className="clear-context-btn"
+              onClick={clearContextFiles}
+              title="Clear all context files"
+            >
+              Clear all
+            </button>
+          </div>
+          <div className="context-files-list">
+            {contextFiles.map((file) => (
+              <div key={file.path} className="context-file-item">
+                <span className="context-file-name" title={file.path}>
+                  📄 {file.name}
+                </span>
+                <button
+                  className="remove-context-btn"
+                  onClick={() => removeFromContext(file)}
+                  title="Remove from context"
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="ai-chat-messages">
         {messages.length === 0 ? (

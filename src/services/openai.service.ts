@@ -44,8 +44,7 @@ export class OpenAIService {
 
   createContextMessages(
     userMessage: string,
-    fileContent?: string,
-    fileName?: string
+    contextFiles: Array<{name: string, content: string}>
   ): ChatCompletionMessageParam[] {
     const messages: ChatCompletionMessageParam[] = [
       {
@@ -54,11 +53,22 @@ export class OpenAIService {
       }
     ];
 
-    if (fileContent && fileName) {
-      messages.push({
-        role: 'system',
-        content: `The user is currently editing a markdown file named "${fileName}". Here is the current content of the file:\n\n${fileContent}`
-      });
+    if (contextFiles.length > 0) {
+      if (contextFiles.length === 1) {
+        messages.push({
+          role: 'system',
+          content: `The user is currently editing a markdown file named "${contextFiles[0].name}". Here is the current content of the file:\n\n${contextFiles[0].content}`
+        });
+      } else {
+        let contextMessage = 'The user has provided the following files as context:\n\n';
+        contextFiles.forEach((file, index) => {
+          contextMessage += `--- File ${index + 1}: ${file.name} ---\n${file.content}\n\n`;
+        });
+        messages.push({
+          role: 'system',
+          content: contextMessage.trim()
+        });
+      }
     }
 
     messages.push({

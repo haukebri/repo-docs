@@ -32,6 +32,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [aiChat, setAiChat] = useState<AIChat>({
     messages: [],
     isLoading: false,
+    contextFiles: [],
   });
   const [fileBrowser, setFileBrowser] = useState<FileBrowserState>({
     files: [],

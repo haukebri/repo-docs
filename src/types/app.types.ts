@@ -40,4 +40,5 @@ export interface AIChat {
   messages: AIMessage[];
   isLoading: boolean;
   error?: string;
+  contextFiles: FileNode[];
 }

@@ -11,12 +11,26 @@ interface FileTreeNodeProps {
   selectedPath?: string;
   onLoadDirectory: (path: string) => Promise<FileNode[]>;
   onUpdateNode: (path: string, children: FileNode[]) => void;
+  contextFiles: FileNode[];
+  onAddToContext: (node: FileNode) => void;
+  onRemoveFromContext: (node: FileNode) => void;
 }
 
-const FileTreeNode: React.FC<FileTreeNodeProps> = ({ node, level, onSelect, selectedPath, onLoadDirectory, onUpdateNode }) => {
+const FileTreeNode: React.FC<FileTreeNodeProps> = ({ 
+  node, 
+  level, 
+  onSelect, 
+  selectedPath, 
+  onLoadDirectory, 
+  onUpdateNode,
+  contextFiles,
+  onAddToContext,
+  onRemoveFromContext
+}) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const isSelected = selectedPath === node.path;
+  const isInContext = contextFiles.some(f => f.path === node.path);
 
   const handleClick = async () => {
     if (node.type === 'directory') {
@@ -53,6 +67,22 @@ const FileTreeNode: React.FC<FileTreeNodeProps> = ({ node, level, onSelect, sele
           )}
         </span>
         <span className="file-tree-name">{node.name}</span>
+        {node.type === 'file' && node.name.endsWith('.md') && (
+          <button
+            className="context-button"
+            onClick={(e) => {
+              e.stopPropagation();
+              if (isInContext) {
+                onRemoveFromContext(node);
+              } else {
+                onAddToContext(node);
+              }
+            }}
+            title={isInContext ? 'Remove from AI context' : 'Add to AI context'}
+          >
+            {isInContext ? '✓' : '+'}
+          </button>
+        )}
       </div>
       {node.type === 'directory' && isExpanded && node.children && (
         <div className="file-tree-children">
@@ -65,6 +95,9 @@ const FileTreeNode: React.FC<FileTreeNodeProps> = ({ node, level, onSelect, sele
               selectedPath={selectedPath}
               onLoadDirectory={onLoadDirectory}
               onUpdateNode={onUpdateNode}
+              contextFiles={contextFiles}
+              onAddToContext={onAddToContext}
+              onRemoveFromContext={onRemoveFromContext}
             />
           ))}
         </div>
@@ -74,7 +107,7 @@ const FileTreeNode: React.FC<FileTreeNodeProps> = ({ node, level, onSelect, sele
 };
 
 export const FileBrowser: React.FC = () => {
-  const { config, fileBrowser, setFileBrowser, currentRepo, setCurrentRepo } = useApp();
+  const { config, fileBrowser, setFileBrowser, currentRepo, setCurrentRepo, aiChat, setAiChat } = useApp();
   const [githubService, setGithubService] = useState<GitHubService | null>(null);
 
   useEffect(() => {
@@ -134,6 +167,20 @@ export const FileBrowser: React.FC = () => {
   const handleRefresh = () => {
     loadFiles();
   };
+
+  const handleAddToContext = useCallback((file: FileNode) => {
+    setAiChat(prev => ({
+      ...prev,
+      contextFiles: [...prev.contextFiles, file]
+    }));
+  }, [setAiChat]);
+
+  const handleRemoveFromContext = useCallback((file: FileNode) => {
+    setAiChat(prev => ({
+      ...prev,
+      contextFiles: prev.contextFiles.filter(f => f.path !== file.path)
+    }));
+  }, [setAiChat]);
 
   const handleLoadDirectory = useCallback(async (path: string): Promise<FileNode[]> => {
     if (!githubService || !currentRepo) {
@@ -201,6 +248,9 @@ export const FileBrowser: React.FC = () => {
                 selectedPath={fileBrowser.selectedFile?.path}
                 onLoadDirectory={handleLoadDirectory}
                 onUpdateNode={updateNodeChildren}
+                contextFiles={aiChat.contextFiles}
+                onAddToContext={handleAddToContext}
+                onRemoveFromContext={handleRemoveFromContext}
               />
             ))
           )}

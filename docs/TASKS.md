@@ -229,6 +229,8 @@ const openai = new OpenAI({
 
 **Objective**: Seamless AI assistance workflow
 
+**Status**: COMPLETED
+
 **Features**:
 
 - File browser: 'Add to chat context' function to not only have the currently open file in the context, but multiple files possible

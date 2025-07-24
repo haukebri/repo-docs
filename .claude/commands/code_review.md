@@ -1,88 +1,71 @@
-# Code Review Command
+# 🔍 Code Review – KISS & Scope-First
 
-## Purpose
+## 🎯 Purpose
 
-Perform fast, parallel code review using Task agents to ensure quality, alignment with requirements, and adherence to KISS principles.
+Quickly evaluate a change to catch **scope creep**, ensure **task alignment**, and uphold the **KISS principle**. Keep it tight. Keep it simple.
 
-## Execution
+---
 
-Launch these Task agents in parallel for comprehensive review:
+## ✅ Review Steps
 
-### Agent 1: Requirements Analyst
+### 1. 📌 Scope Check (Task Compliance)
 
-**Focus**: Task verification and scope assessment
+- Read the task, ticket, or bug description.
+- Run `git diff --stat` and `git diff`:
+  - Are all changes **within expected files**?
+  - Any **unrelated refactors, formatting, or extras**? Flag them.
+- If files outside the task scope are modified, document why.
 
-- Review the original task/bug description
-- Check all modified files with `git diff`
-- Verify implementation matches exact requirements
-- Flag any scope creep or unnecessary additions
-- Ensure no files were modified outside task scope
+> ❗ Focus on: **Unnecessary additions**, **scope drift**, and **unrequested extras**
 
-### Agent 2: Business Alignment Checker
+---
 
-**Focus**: Client briefing and UX compliance
+### 2. 🧠 Simplicity Check (KISS Compliance)
 
-- Read `/docs/*`
-- Verify UX flow is preserved
-- Check business logic and calculations
-- Ensure user experience matches expectations
-- Review any UI changes for consistency
+- Review the implementation for clarity.
+- Ask: **Could this be done in a simpler or clearer way?**
+- Flag:
+  - Overuse of abstraction
+  - Redundant logic
+  - Fancy solutions to simple problems
 
-### Agent 3: Code Quality Inspector
+> ❗ If it's not the simplest thing that works — call it out.
 
-**Focus**: Technical excellence and KISS principles
+---
 
-- Evaluate code simplicity and readability
-- Check for over-engineering
-- Verify coding standards (WordPress/PHP/JS)
-- Look for obvious bugs or edge cases
-- Assess if solution could be simpler
+### 3. 🧪 Smoke Test (Optional, If Critical Logic Changed)
 
-### Agent 4: Testing & Integration Validator
+- Check if any test was added or updated.
+- If no tests and the change affects visible logic, run a quick **Playwright test manually**:
+  - Store all **screenshots inside the project folder:** `./test-artifacts/screenshots/`
+  - **Do not** save screenshots to `~/Downloads` or external paths
 
-**Focus**: Tests and system integration
+> This is not a full regression — just ensure no obvious breakage.
 
-- Check if tests were added/updated
-- Run `npm run lint`
-- Verify database migrations if needed
-- Check for version bumps in files
-- Ensure no breaking changes
+---
 
-## Synthesis
+## 🟢 Pass Criteria
 
-After all agents complete, synthesize findings into a verdict:
+- All changes align with the **original task**
+- Code is **clear, simple, and maintainable**
+- No unrelated edits
 
-### ✅ PASSED
+---
 
-**Summary from all agents:**
+## ❌ Fail If
 
-- ✓ Requirements: [Agent 1 findings]
-- ✓ Business: [Agent 2 findings]
-- ✓ Code Quality: [Agent 3 findings]
-- ✓ Integration: [Agent 4 findings]
+- Scope creep is detected
+- The solution is overengineered
+- There are any unjustified unrelated changes
 
-**Commit message:**
+---
 
-```
-[type]: [concise description]
+## ✅ Output Format (Use placeholders only)
 
-- [Key change from implementation]
-- [Impact/benefit]
-```
+🎯 Task Scope: <clean / off-scope changes found>  
+🧠 Simplicity: <simple / overengineered>  
+🧪 Smoke Check: <not needed / done / missing>  
 
-### ❌ NEEDS REVISION
+🟢 Verdict: <OK / OK with comment / Needs revision>  
 
-**Issues identified by agents:**
-
-- Agent 1: [Requirement mismatches]
-- Agent 2: [Business logic concerns]
-- Agent 3: [Code quality issues]
-- Agent 4: [Test/integration problems]
-
-**Priority fixes:**
-
-1. [Most critical issue]
-2. [Second priority]
-3. [Additional concerns]
-
-**Files to modify:** [List from agents]
+💬 Notes: <insert summary or actionable comments here>

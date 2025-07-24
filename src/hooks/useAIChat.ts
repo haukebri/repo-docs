@@ -1,20 +1,28 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { useApp } from './useApp';
 import { OpenAIService } from '../services/openai.service';
-import type { AIMessage } from '../types/app.types';
+import { GitHubService } from '../services/github.service';
+import type { AIMessage, FileNode } from '../types/app.types';
 
 export const useAIChat = () => {
-  const { config, aiChat, setAiChat, editorState, setEditorState } = useApp();
+  const { config, aiChat, setAiChat, editorState, setEditorState, currentRepo } = useApp();
   const [input, setInput] = useState('');
   const openAIServiceRef = useRef<OpenAIService | null>(null);
+  const [githubService, setGithubService] = useState<GitHubService | null>(null);
 
-  // Initialize OpenAI service when API key is available
-  if (config?.openaiApiKey && !openAIServiceRef.current) {
-    openAIServiceRef.current = new OpenAIService(
-      config.openaiApiKey,
-      config.openaiModel || 'gpt-4.1-nano'
-    );
-  }
+  // Initialize services when API keys are available
+  useEffect(() => {
+    if (config?.openaiApiKey && !openAIServiceRef.current) {
+      openAIServiceRef.current = new OpenAIService(
+        config.openaiApiKey,
+        config.openaiModel || 'gpt-4.1-nano'
+      );
+    }
+    
+    if (config?.githubToken) {
+      setGithubService(new GitHubService(config.githubToken));
+    }
+  }, [config?.openaiApiKey, config?.githubToken, config?.openaiModel]);
 
   const sendMessage = useCallback(async (message: string) => {
     if (!openAIServiceRef.current || !message.trim()) return;
@@ -48,11 +56,39 @@ export const useAIChat = () => {
     }));
 
     try {
-      // Create messages with context
+      // Fetch content for all context files
+      const contextFileContents: Array<{name: string, content: string}> = [];
+      
+      // Add current file if it exists
+      if (editorState.currentFile && editorState.content) {
+        contextFileContents.push({
+          name: editorState.currentFile.name,
+          content: editorState.content
+        });
+      }
+      
+      // Fetch content for additional context files
+      if (githubService && currentRepo && aiChat.contextFiles.length > 0) {
+        for (const file of aiChat.contextFiles) {
+          // Skip if it's the current file (already added)
+          if (file.path === editorState.currentFile?.path) continue;
+          
+          try {
+            const content = await githubService.getFileContent(currentRepo, file.path);
+            contextFileContents.push({
+              name: file.name,
+              content
+            });
+          } catch (error) {
+            console.error(`Failed to fetch content for ${file.name}:`, error);
+          }
+        }
+      }
+      
+      // Create messages with all context files
       const messages = openAIServiceRef.current.createContextMessages(
         message,
-        editorState.content,
-        editorState.currentFile?.name
+        contextFileContents
       );
 
       // Stream the response
@@ -93,15 +129,35 @@ export const useAIChat = () => {
         error: error instanceof Error ? error.message : 'An error occurred'
       }));
     }
-  }, [editorState.content, editorState.currentFile?.name, setAiChat]);
+  }, [editorState.content, editorState.currentFile, aiChat.contextFiles, githubService, currentRepo, setAiChat]);
 
   const clearChat = useCallback(() => {
-    setAiChat({
+    setAiChat(prev => ({
+      ...prev,
       messages: [],
       isLoading: false,
       error: undefined
-    });
+    }));
   }, [setAiChat]);
+
+  const removeFromContext = useCallback((file: FileNode) => {
+    setAiChat(prev => ({
+      ...prev,
+      contextFiles: prev.contextFiles.filter(f => f.path !== file.path)
+    }));
+  }, [setAiChat]);
+
+  const clearContextFiles = useCallback(() => {
+    setAiChat(prev => ({
+      ...prev,
+      contextFiles: []
+    }));
+  }, [setAiChat]);
+
+  const sendSelectedText = useCallback(async (selectedText: string) => {
+    const message = `About this selected text:\n> ${selectedText}\n\nWhat would you like me to help with?`;
+    await sendMessage(message);
+  }, [sendMessage]);
 
   const copyToClipboard = useCallback(async (content: string) => {
     try {
@@ -182,6 +238,10 @@ export const useAIChat = () => {
     clearChat,
     copyToClipboard,
     applyToDocument,
-    hasApiKey: !!config?.openaiApiKey
+    hasApiKey: !!config?.openaiApiKey,
+    contextFiles: aiChat.contextFiles,
+    removeFromContext,
+    clearContextFiles,
+    sendSelectedText
   };
 };
