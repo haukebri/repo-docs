@@ -182,16 +182,8 @@ input, textarea {
   color: #666;
 }
 
-/* Selection popup */
-.selection-popup {
-  background: #fff;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  padding: 4px;
-}
-
-.selection-popup-button {
+/* Send selection button in editor toolbar */
+.send-selection-button {
   padding: 6px 12px;
   background: #007acc;
   color: white;
@@ -199,8 +191,9 @@ input, textarea {
   border-radius: 3px;
   font-size: 13px;
   white-space: nowrap;
+  margin-right: 8px;
 }
 
-.selection-popup-button:hover {
+.send-selection-button:hover {
   background: #005a9e;
 }

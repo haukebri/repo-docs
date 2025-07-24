@@ -2,7 +2,6 @@ import React, { useState, useCallback, useEffect } from 'react';
 import MDEditor from '@uiw/react-md-editor';
 import { useApp } from '../hooks/useApp';
 import { useAIChat } from '../hooks/useAIChat';
-import { SelectionPopup } from './SelectionPopup';
 
 interface MarkdownEditorProps {
   onSave?: () => void;
@@ -13,7 +12,6 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({ onSave }) => {
   const { sendSelectedText } = useAIChat();
   const [isEditMode, setIsEditMode] = useState(true);
   const [selectedText, setSelectedText] = useState<string | null>(null);
-  const [selectionPosition, setSelectionPosition] = useState<{ x: number; y: number } | null>(null);
 
   const handleChange = useCallback(
     (value?: string) => {
@@ -40,17 +38,9 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({ onSave }) => {
     const selection = window.getSelection();
     if (selection && selection.toString().trim()) {
       const text = selection.toString();
-      const range = selection.getRangeAt(0);
-      const rect = range.getBoundingClientRect();
-      
       setSelectedText(text);
-      setSelectionPosition({
-        x: rect.left + rect.width / 2,
-        y: rect.top - 10
-      });
     } else {
       setSelectedText(null);
-      setSelectionPosition(null);
     }
   }, []);
 
@@ -69,12 +59,17 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({ onSave }) => {
 
   // Handle text selection
   useEffect(() => {
-    document.addEventListener('mouseup', handleTextSelection);
-    document.addEventListener('keyup', handleTextSelection);
+    // Add a small delay to ensure the selection is complete
+    const handleSelectionWithDelay = () => {
+      setTimeout(handleTextSelection, 10);
+    };
+    
+    document.addEventListener('mouseup', handleSelectionWithDelay);
+    document.addEventListener('keyup', handleSelectionWithDelay);
     
     return () => {
-      document.removeEventListener('mouseup', handleTextSelection);
-      document.removeEventListener('keyup', handleTextSelection);
+      document.removeEventListener('mouseup', handleSelectionWithDelay);
+      document.removeEventListener('keyup', handleSelectionWithDelay);
     };
   }, [handleTextSelection]);
 
@@ -82,7 +77,6 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({ onSave }) => {
     sendSelectedText(text);
     // Clear selection after sending
     setSelectedText(null);
-    setSelectionPosition(null);
   }, [sendSelectedText]);
 
   if (!editorState.currentFile) {
@@ -95,19 +89,21 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({ onSave }) => {
 
   return (
     <div className="markdown-editor">
-      {selectedText && selectionPosition && (
-        <SelectionPopup
-          selectedText={selectedText}
-          position={selectionPosition}
-          onSendToChat={handleSendToChat}
-        />
-      )}
       <div className="editor-header">
         <div className="editor-file-info">
           <span className="file-name">{editorState.currentFile.name}</span>
           {editorState.isDirty && <span className="dirty-indicator">•</span>}
         </div>
         <div className="editor-actions">
+          {selectedText && (
+            <button
+              className="send-selection-button"
+              onClick={() => handleSendToChat(selectedText)}
+              title="Send selected text to AI chat"
+            >
+              💬 Send Selection to Chat
+            </button>
+          )}
           <button
             className="mode-toggle"
             onClick={toggleMode}
