@@ -4,7 +4,7 @@ import { OpenAIService } from '../services/openai.service';
 import type { AIMessage } from '../types/app.types';
 
 export const useAIChat = () => {
-  const { config, aiChat, setAiChat, editorState } = useApp();
+  const { config, aiChat, setAiChat, editorState, setEditorState } = useApp();
   const [input, setInput] = useState('');
   const openAIServiceRef = useRef<OpenAIService | null>(null);
 
@@ -113,6 +113,65 @@ export const useAIChat = () => {
     }
   }, []);
 
+  const applyToDocument = useCallback(async () => {
+    if (!openAIServiceRef.current || aiChat.messages.length === 0) return false;
+
+    // Convert our AIMessage format to ChatCompletionMessageParam format
+    const chatHistory = aiChat.messages.map(msg => ({
+      role: msg.role as 'user' | 'assistant',
+      content: msg.content
+    }));
+
+    setAiChat(prev => ({ ...prev, isLoading: true }));
+
+    try {
+      const result = await openAIServiceRef.current.analyzeDocumentUpdate(
+        chatHistory,
+        editorState.content
+      );
+
+      if (!result) {
+        setAiChat(prev => ({
+          ...prev,
+          isLoading: false,
+          error: 'Could not identify which section to update. Please be more specific about what changes you want.'
+        }));
+        return false;
+      }
+
+      // Apply the update to the document
+      const updatedContent = editorState.content.replace(
+        result.oldContent,
+        result.newContent
+      );
+
+      if (updatedContent === editorState.content) {
+        setAiChat(prev => ({
+          ...prev,
+          isLoading: false,
+          error: 'Could not find the specified content in the document. The document may have changed.'
+        }));
+        return false;
+      }
+
+      setEditorState(prev => ({
+        ...prev,
+        content: updatedContent,
+        isDirty: true
+      }));
+
+      setAiChat(prev => ({ ...prev, isLoading: false, error: undefined }));
+      return true;
+    } catch (error) {
+      setAiChat(prev => ({
+        ...prev,
+        isLoading: false,
+        error: error instanceof Error ? error.message : 'Failed to apply changes'
+      }));
+      return false;
+    }
+  }, [aiChat.messages, editorState.content, setAiChat, setEditorState]);
+
   return {
     messages: aiChat.messages,
     isLoading: aiChat.isLoading,
@@ -122,6 +181,7 @@ export const useAIChat = () => {
     sendMessage,
     clearChat,
     copyToClipboard,
+    applyToDocument,
     hasApiKey: !!config?.openaiApiKey
   };
 };

@@ -1,5 +1,6 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useAIChat } from '../hooks/useAIChat';
+import { MessageContent } from './MessageContent';
 
 export const AIChatPanel: React.FC = () => {
   const {
@@ -11,8 +12,10 @@ export const AIChatPanel: React.FC = () => {
     sendMessage,
     clearChat,
     copyToClipboard,
+    applyToDocument,
     hasApiKey
   } = useAIChat();
+  const [applySuccess, setApplySuccess] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -45,6 +48,14 @@ export const AIChatPanel: React.FC = () => {
     }
   };
 
+  const handleApplyToDocument = async () => {
+    const success = await applyToDocument();
+    if (success) {
+      setApplySuccess(true);
+      setTimeout(() => setApplySuccess(false), 3000);
+    }
+  };
+
   if (!hasApiKey) {
     return (
       <div className="ai-chat-panel">
@@ -61,15 +72,27 @@ export const AIChatPanel: React.FC = () => {
     <div className="ai-chat-panel">
       <div className="ai-chat-header">
         <h2>AI Assistant</h2>
-        {messages.length > 0 && (
-          <button 
-            className="clear-chat-btn"
-            onClick={clearChat}
-            title="Clear chat"
-          >
-            Clear
-          </button>
-        )}
+        <div className="ai-chat-actions">
+          {messages.length > 0 && (
+            <>
+              <button
+                className="apply-document-btn"
+                onClick={handleApplyToDocument}
+                disabled={isLoading || messages.length < 2}
+                title="Apply changes to document"
+              >
+                {applySuccess ? '✓ Applied' : 'Apply to Document'}
+              </button>
+              <button 
+                className="clear-chat-btn"
+                onClick={clearChat}
+                title="Clear chat"
+              >
+                Clear
+              </button>
+            </>
+          )}
+        </div>
       </div>
 
       <div className="ai-chat-messages">
@@ -92,15 +115,17 @@ export const AIChatPanel: React.FC = () => {
                   {message.role === 'user' ? 'You' : 'AI'}
                 </div>
                 <div className="ai-message-content">
-                  {message.content}
+                  <MessageContent content={message.content} />
                   {message.role === 'assistant' && message.content && (
-                    <button
-                      className="copy-btn"
-                      onClick={() => handleCopy(message.content)}
-                      title="Copy to clipboard"
-                    >
-                      Copy
-                    </button>
+                    <div className="message-actions">
+                      <button
+                        className="copy-btn"
+                        onClick={() => handleCopy(message.content)}
+                        title="Copy to clipboard"
+                      >
+                        Copy
+                      </button>
+                    </div>
                   )}
                 </div>
               </div>
